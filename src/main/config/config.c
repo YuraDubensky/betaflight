@@ -113,6 +113,18 @@ PG_RESET_TEMPLATE(pilotConfig_t, pilotConfig,
     .pilotName = { 0 },
 );
 
+PG_REGISTER_WITH_RESET_TEMPLATE(targetConfig_t, targetConfig, PG_TARGET_CONFIG, 2);
+
+PG_RESET_TEMPLATE(targetConfig_t, targetConfig,
+    .isDebug = false,
+    .telementryFPS = -1,
+    .speed = -1,
+    .distanceToImpact = -1,
+    .altitude = 0,
+    .targetsCount = 0,
+    .targets = NULL,
+);
+
 PG_REGISTER_WITH_RESET_TEMPLATE(systemConfig_t, systemConfig, PG_SYSTEM_CONFIG, 3);
 
 PG_RESET_TEMPLATE(systemConfig_t, systemConfig,
@@ -128,6 +140,15 @@ PG_RESET_TEMPLATE(systemConfig_t, systemConfig,
     .configurationState = CONFIGURATION_STATE_DEFAULTS_BARE,
     .enableStickArming = false,
 );
+
+targetCoordinates_t targets[6];
+
+static void initTargetConfig(void)
+{
+    targetConfigMutable()->isDebug = false;
+    targetConfigMutable()->targetsCount = 0;
+    targetConfigMutable()->targets = &targets[0];
+}
 
 bool isEepromWriteInProgress(void)
 {
@@ -165,6 +186,7 @@ void resetConfig(void)
 
 static void activateConfig(void)
 {
+    initTargetConfig();
     loadPidProfile();
     loadControlRateProfile();
 

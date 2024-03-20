@@ -34,3 +34,6 @@
 #define MSP2TEXT_RATE_PROFILE_NAME               4
 #define MSP2TEXT_BUILDKEY                        5
 #define MSP2TEXT_RELEASENAME                     6
+
+// Custom target
+#define MSP_SET_ON_SCREEN_TARGET           0x1909

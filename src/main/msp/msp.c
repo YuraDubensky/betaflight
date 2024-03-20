@@ -3997,6 +3997,35 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #endif
         }
         break;
+    case MSP_SET_ON_SCREEN_TARGET:
+        {
+            // type byte, then length byte followed by the actual characters
+            const bool isDebug = sbufReadU8(src) > 0; 
+            const uint8_t targetsCount = sbufReadU8(src);
+
+            targetConfigMutable()->isDebug = isDebug;
+            targetConfigMutable()->targetsCount = targetsCount;
+
+            if(targetsCount > 0){
+                for (uint8_t i = 0; i < targetsCount; i++)
+                {
+                    const uint8_t row = sbufReadU8(src);
+                    const uint8_t col = sbufReadU8(src);
+                    const uint8_t symbolOffset = sbufReadU8(src);
+                    targetConfigMutable()->targets[i].row = row;
+                    targetConfigMutable()->targets[i].col = col;
+                    targetConfigMutable()->targets[i].symbolOffset = symbolOffset;
+                }
+            }
+
+            if(isDebug){
+                targetConfigMutable()->telementryFPS = sbufReadU8(src);
+                targetConfigMutable()->speed = sbufReadU8(src);
+                targetConfigMutable()->distanceToImpact = sbufReadU8(src);
+                targetConfigMutable()->altitude = sbufReadU8(src);
+            }
+        }
+        break;
 
     default:
         // we do not know how to handle the (valid) message, indicate error MSP $M!

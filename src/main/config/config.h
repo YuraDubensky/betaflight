@@ -40,6 +40,24 @@ typedef struct pilotConfig_s {
 
 PG_DECLARE(pilotConfig_t, pilotConfig);
 
+typedef struct targetCoordinates_s {
+    uint8_t row;
+    uint8_t col;
+    uint8_t symbolOffset;
+} targetCoordinates_t;
+
+typedef struct targetConfig_s {
+    bool isDebug;
+    signed char telementryFPS;
+    signed char speed; 
+    signed char distanceToImpact; 
+    uint8_t altitude; 
+    uint8_t targetsCount;
+    targetCoordinates_t* targets;
+} targetConfig_t;
+
+PG_DECLARE(targetConfig_t, targetConfig);
+
 typedef struct systemConfig_s {
     uint8_t pidProfileIndex;
     uint8_t activeRateProfile;

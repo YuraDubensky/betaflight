@@ -84,8 +84,8 @@ extern const char * const osdTimerSourceNames[OSD_NUM_TIMER_TYPES];
 
 #define OSD_SD_COLS VIDEO_COLUMNS_SD
 #define OSD_SD_ROWS VIDEO_LINES_PAL
-
 // Default HD OSD canvas size to be applied unless the goggles announce otherwise
+
 #define OSD_HD_COLS 53
 #define OSD_HD_ROWS 20
 
@@ -175,6 +175,7 @@ typedef enum {
     OSD_AUX_VALUE,
     OSD_READY_MODE,
     OSD_RSNR_VALUE,
+    OSD_CUSTOM_TARGET,
     OSD_SYS_GOGGLE_VOLTAGE,
     OSD_SYS_VTX_VOLTAGE,
     OSD_SYS_BITRATE,
