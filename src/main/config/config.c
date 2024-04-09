@@ -122,6 +122,8 @@ PG_RESET_TEMPLATE(targetConfig_t, targetConfig,
     .distanceToImpact = -1,
     .altitude = 0,
     .targetsCount = 0,
+    .currentTimeUs = 0,
+    .mspReturnAttitudeCount = 0,
     .targets = NULL,
 );
 
@@ -147,6 +149,7 @@ static void initTargetConfig(void)
 {
     targetConfigMutable()->isDebug = false;
     targetConfigMutable()->targetsCount = 0;
+    targetConfigMutable()->mspReturnAttitudeCount = 0;
     targetConfigMutable()->targets = &targets[0];
 }
 

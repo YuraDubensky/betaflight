@@ -53,6 +53,8 @@ typedef struct targetConfig_s {
     signed char distanceToImpact; 
     uint8_t altitude; 
     uint8_t targetsCount;
+    uint32_t currentTimeUs;
+    uint32_t mspReturnAttitudeCount;
     targetCoordinates_t* targets;
 } targetConfig_t;
 

@@ -1330,9 +1330,11 @@ case MSP_NAME:
         break;
 
     case MSP_ATTITUDE:
+        targetConfigMutable()->mspReturnAttitudeCount++;
         sbufWriteU16(dst, attitude.values.roll);
         sbufWriteU16(dst, attitude.values.pitch);
         sbufWriteU16(dst, DECIDEGREES_TO_DEGREES(attitude.values.yaw));
+        sbufWriteU32(dst, micros());
         break;
 
     case MSP_ALTITUDE:
@@ -4023,6 +4025,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
                 targetConfigMutable()->speed = sbufReadU8(src);
                 targetConfigMutable()->distanceToImpact = sbufReadU8(src);
                 targetConfigMutable()->altitude = sbufReadU8(src);
+                targetConfigMutable()->currentTimeUs = sbufReadU32(src);
             }
         }
         break;

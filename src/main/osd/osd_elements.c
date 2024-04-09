@@ -185,6 +185,7 @@
 #define EFFICIENCY_CUTOFF_HZ 0.5f
 
 static pt1Filter_t batteryEfficiencyFilt;
+static timeUs_t currentTimeUsGlobal = 0;
 
 #define MOTOR_STOPPED_THRESHOLD_RPM 1000
 
@@ -791,6 +792,12 @@ static void osdElementCustomTarget(osdElementParms_t *element)
         osdWriteDebugInfo(element, startDebugRow++, 1, "SPEED:%3d", targetConfig()->speed);
         osdWriteDebugInfo(element, startDebugRow++, 1, "DIST:%3d", targetConfig()->distanceToImpact);
         osdWriteDebugInfo(element, startDebugRow++, 1, "ALT:%3d", targetConfig()->altitude);
+        uint32_t diff = micros() - targetConfig()->currentTimeUs;
+        osdWriteDebugInfo(element, startDebugRow++, 1, "Delay:%3d", (unsigned char)(diff / 1000));
+        
+        char fmtbuf[12];
+        tfp_sprintf(fmtbuf, "C:%6d", targetConfig()->mspReturnAttitudeCount);
+        osdDisplayWrite(element, 1, startDebugRow++, DISPLAYPORT_SEVERITY_NORMAL, fmtbuf);
     }
 
     if (targetConfig()->targetsCount > 0)
@@ -2216,7 +2223,7 @@ void osdAddActiveElements(void)
 #endif
 }
 
-static void osdDrawSingleElement(displayPort_t *osdDisplayPort, uint8_t item)
+static void osdDrawSingleElement(displayPort_t *osdDisplayPort, uint8_t item, timeUs_t currentTimeUs)
 {
     if (!osdElementDrawFunction[item])
     {
@@ -2249,6 +2256,7 @@ static void osdDrawSingleElement(displayPort_t *osdDisplayPort, uint8_t item)
     }
     else
     {
+        currentTimeUsGlobal = currentTimeUs;
         osdElementDrawFunction[item](&element);
         if (element.drawElement)
         {
@@ -2316,7 +2324,7 @@ bool osdDrawNextActiveElement(displayPort_t *osdDisplayPort, timeUs_t currentTim
         osdDrawSingleElementBackground(osdDisplayPort, activeOsdElementArray[activeElement]);
     }
 
-    osdDrawSingleElement(osdDisplayPort, activeOsdElementArray[activeElement]);
+    osdDrawSingleElement(osdDisplayPort, activeOsdElementArray[activeElement], currentTimeUs);
 
     if (++activeElement >= activeOsdElementCount)
     {
