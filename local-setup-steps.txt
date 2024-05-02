@@ -1,3 +1,6 @@
+Setup env:
+make arm_sdk_install
+
 Build specific target:
 make STM32F7X2
 
