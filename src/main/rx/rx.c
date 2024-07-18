@@ -113,6 +113,7 @@ static uint16_t uplinkTxPwrMw = 0;  //Uplink Tx power in mW
 rssiSource_e rssiSource;
 linkQualitySource_e linkQualitySource;
 
+static bool isFailsafeMode = false;
 static bool rxDataProcessingRequired = false;
 static bool auxiliaryProcessingRequired = false;
 
@@ -552,6 +553,7 @@ FAST_CODE_NOINLINE void rxFrameCheck(timeUs_t currentTimeUs, timeDelta_t current
         //  true only when a new packet arrives
         needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
         rxSignalReceived = true; // immediately process packet data
+        isFailsafeMode = false;
         if (useDataDrivenProcessing) {
             rxDataProcessingRequired = true;
             //  process the new Rx packet when it arrives
@@ -573,6 +575,7 @@ FAST_CODE_NOINLINE void rxFrameCheck(timeUs_t currentTimeUs, timeDelta_t current
             rxSignalReceived = true;
             rxDataProcessingRequired = true;
             needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
+            isFailsafeMode = true;
         }
     }
 #endif
@@ -691,7 +694,8 @@ void detectAndApplySignalLossBehaviour(void)
     // can also go false with good packets but where one flight channel is bad > 300ms (PPM type receiver error)
 
     for (int channel = 0; channel < rxChannelCount; channel++) {
-        float sample = rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
+        // in case Failsafe stage 1 was activated - need to make sure to grab aux values from failsafe and rc from MSP
+        float sample = (isFailsafeMode && channel >= NON_AUX_CHANNEL_COUNT) ? getRxfailValue(channel) : rcRaw[channel]; // sample has latest RC value, rcData has last 'accepted valid' value
         const bool thisChannelValid = rxFlightChannelsValid && isPulseValid(sample);
         // if the whole packet is bad, or BOXFAILSAFE switch is actioned, consider all channels bad
         if (thisChannelValid) {
